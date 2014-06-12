@@ -3,6 +3,7 @@ package com.example.bounce;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MotionEventCompat;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -17,7 +18,9 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -25,6 +28,10 @@ import android.widget.RelativeLayout;
 import android.os.Build;
 
 public class MainActivity extends ActionBarActivity {
+
+	public static final int mRadius = 60;
+	public static float mCenterX;
+	public static float mCenterY;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,40 @@ public class MainActivity extends ActionBarActivity {
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
 
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		int action = MotionEventCompat.getActionMasked(event);
+		float x = event.getX();
+		float y = event.getY();
+
+		if (inCircle(x, y, mCenterX, mCenterY)) {
+			switch (action) {
+			case (MotionEvent.ACTION_DOWN):
+				Log.d("motion event", "Action was DOWN");
+				return true;
+			case (MotionEvent.ACTION_MOVE):
+				Log.d("motion event", "Action was MOVE");
+				return true;
+			case (MotionEvent.ACTION_UP):
+				Log.d("motion event", "Action was UP");
+				return true;
+			default:
+				return super.onTouchEvent(event);
+			}
+		}
+		return true;
+	}
+	
+	private boolean inCircle(float x, float y, float centerX, float centerY){
+		double dx = Math.pow(x-centerX, 2);
+		double dy = Math.pow(y-centerY, 2);
+		if ((dx+dy) < Math.pow(mRadius, 2)){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	@Override
@@ -62,13 +103,13 @@ public class MainActivity extends ActionBarActivity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
-		private ImageView mImageView;
-		private Canvas mCanvas;
-		private Bitmap mBall;
-		private int mWidth;
-		private int mHeight;
-		private Paint mPaint;
-		private View mRootView;
+		public ImageView mImageView;
+		public Canvas mCanvas;
+		public Bitmap mBall;
+		public int mWidth;
+		public int mHeight;
+		public Paint mPaint;
+		public View mRootView;
 
 		public PlaceholderFragment() {
 		}
@@ -79,34 +120,30 @@ public class MainActivity extends ActionBarActivity {
 			mRootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 			Handler circleHandler = new Handler();
-			circleHandler.postDelayed(new Runnable(){
+			circleHandler.postDelayed(new Runnable() {
 				@Override
-				public void run(){
+				public void run() {
 					drawBall(mRootView);
 				}
 			}, 500);
-			
-			Log.d("run", "done with run");
-			Log.d("width height after run", "mWidth: " + mWidth + ", mHeight: " + mHeight);
 
 			return mRootView;
 		}
-		
-		public void drawBall(View rootView){
+
+		public void drawBall(View rootView) {
 			mImageView = (ImageView) rootView.findViewById(R.id.backdrop);
 			mWidth = mImageView.getWidth();
 			mHeight = mImageView.getHeight();
-			mBall = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+			mBall = Bitmap.createBitmap(mWidth, mHeight,
+					Bitmap.Config.ARGB_8888);
 			mCanvas = new Canvas(mBall);
 			mPaint = new Paint();
 			mPaint.setColor(Color.RED);
-			
-			Log.d("width height during run", "mWidth: " + mWidth + ", mHeight: " + mHeight);
-			mCanvas.drawCircle(mWidth / 2, mHeight / 2, 60, mPaint);
+			mCanvas.drawCircle(mWidth / 2, mHeight / 2, mRadius, mPaint);
+			mCenterX = mWidth / 2;
+			mCenterY = mHeight / 2;
 			mImageView.setImageDrawable(new BitmapDrawable(getResources(),
 					mBall));
-			//mImageView.setImageResource(R.drawable.ic_launcher);
-			Log.d("drawCircle", "done with drawCircle");
 			rootView.invalidate();
 
 		}

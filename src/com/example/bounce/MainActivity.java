@@ -86,6 +86,7 @@ public class MainActivity extends ActionBarActivity {
 				}
 			}, 500);
 			
+			Log.d("run", "done with run");
 			Log.d("width height after run", "mWidth: " + mWidth + ", mHeight: " + mHeight);
 
 			return mRootView;
@@ -93,16 +94,20 @@ public class MainActivity extends ActionBarActivity {
 		
 		public void drawBall(View rootView){
 			mImageView = (ImageView) rootView.findViewById(R.id.backdrop);
-			mBall = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+			mWidth = mImageView.getWidth();
+			mHeight = mImageView.getHeight();
+			mBall = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
 			mCanvas = new Canvas(mBall);
 			mPaint = new Paint();
 			mPaint.setColor(Color.RED);
-			mWidth = mImageView.getWidth();
-			mHeight = mImageView.getHeight();
-			mCanvas.drawCircle(mWidth / 2, -mHeight / 2, 20, mPaint);
+			
+			Log.d("width height during run", "mWidth: " + mWidth + ", mHeight: " + mHeight);
+			mCanvas.drawCircle(mWidth / 2, mHeight / 2, 60, mPaint);
 			mImageView.setImageDrawable(new BitmapDrawable(getResources(),
 					mBall));
+			//mImageView.setImageResource(R.drawable.ic_launcher);
 			Log.d("drawCircle", "done with drawCircle");
+			rootView.invalidate();
 
 		}
 	}

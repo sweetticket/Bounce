@@ -29,7 +29,7 @@ import android.os.Build;
 
 public class MainActivity extends ActionBarActivity {
 
-	public static final int mRadius = 60;
+	public static final float mRadius = 60;
 	public static float mCenterX;
 	public static float mCenterY;
 
@@ -51,30 +51,35 @@ public class MainActivity extends ActionBarActivity {
 		float x = event.getX();
 		float y = event.getY();
 
-		if (inCircle(x, y, mCenterX, mCenterY)) {
-			switch (action) {
-			case (MotionEvent.ACTION_DOWN):
+		boolean inC = inCircle(x, y, mCenterX, mCenterY, mRadius);
+		Log.d("inCircle", "inCircle: "+inC);
+		
+		switch (action) {
+		case (MotionEvent.ACTION_DOWN):{
+			if (inCircle(x, y, mCenterX, mCenterY, mRadius)) {
 				Log.d("motion event", "Action was DOWN");
-				return true;
-			case (MotionEvent.ACTION_MOVE):
-				Log.d("motion event", "Action was MOVE");
-				return true;
-			case (MotionEvent.ACTION_UP):
-				Log.d("motion event", "Action was UP");
-				return true;
-			default:
-				return super.onTouchEvent(event);
 			}
-		}
-		return true;
-	}
-	
-	private boolean inCircle(float x, float y, float centerX, float centerY){
-		double dx = Math.pow(x-centerX, 2);
-		double dy = Math.pow(y-centerY, 2);
-		if ((dx+dy) < Math.pow(mRadius, 2)){
 			return true;
-		}else{
+		}
+		case (MotionEvent.ACTION_MOVE):
+			Log.d("motion event", "Action was MOVE");
+			return true;
+		case (MotionEvent.ACTION_UP):
+			Log.d("motion event", "Action was UP");
+			return true;
+		default:
+			return super.onTouchEvent(event);
+		}
+	}
+
+	private boolean inCircle(float x, float y, float centerX, float centerY, float radius) {
+		double dx = Math.pow(x - centerX, 2);
+		double dy = Math.pow(y - centerY, 2);
+		Log.d("inCircle", "dx: "+dx);
+		Log.d("inCircle", "dy: "+dy);
+		if ((dx + dy) < Math.pow(radius, 2)) {
+			return true;
+		} else {
 			return false;
 		}
 	}

@@ -69,7 +69,8 @@ public class MainActivity extends ActionBarActivity {
 		private static int mScreenWidth;
 		private static int mScreenHeight;
 		private BallModel mBall;
-		
+		private boolean moveEnabled;
+
 		public PlaceholderFragment() {
 		}
 
@@ -78,11 +79,13 @@ public class MainActivity extends ActionBarActivity {
 				Bundle savedInstanceState) {
 			mRootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
+			moveEnabled = false;
 			Handler circleHandler = new Handler();
 			circleHandler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
-					mImageView = (ImageView) mRootView.findViewById(R.id.backdrop);
+					mImageView = (ImageView) mRootView
+							.findViewById(R.id.backdrop);
 					mScreenWidth = mImageView.getWidth();
 					mScreenHeight = mImageView.getHeight();
 					mBall = new BallModel(); // instantiate a new ball
@@ -91,70 +94,75 @@ public class MainActivity extends ActionBarActivity {
 					drawBall();
 				}
 			}, 500);
-			
+
 			mRootView.setOnTouchListener(new View.OnTouchListener() {
-				
+
 				@Override
 				public boolean onTouch(View view, MotionEvent event) {
 					int action = MotionEventCompat.getActionMasked(event);
 					float x = event.getX();
 					float y = event.getY();
 
-					if (inCircle(x, y, mBall.getPrevX(), mBall.getPrevY())) {
-						switch (action) {
-						case (MotionEvent.ACTION_DOWN): {
+					switch (action) {
+					case (MotionEvent.ACTION_DOWN): {
+						if (inCircle(x, y, mBall.getPrevX(), mBall.getPrevY())) {
+							moveEnabled = true;
 							Log.d("motion event", "Action was DOWN");
-							return true;
 						}
-						case (MotionEvent.ACTION_MOVE):
-							Log.d("motion event", "Action was MOVE");
-							moveBall(x,y);
-							return true;
-						case (MotionEvent.ACTION_UP):
-							Log.d("motion event", "Action was UP");
-							return true;
-						default:
-							return true;
+						return true;
+					}
+					case (MotionEvent.ACTION_MOVE):
+						if (moveEnabled) {
+							moveBall(x, y);
 						}
-					} else
-						return false;
+						Log.d("motion event", "Action was MOVE");
+						return true;
+					case (MotionEvent.ACTION_UP):
+						moveEnabled = false;
+						Log.d("motion event", "Action was UP");
+						return true;
+					default:
+						return true;
+					}
+
 				}
 			});
-			
+
 			return mRootView;
 		}
-		
+
 		/** Getter: screen width */
-		public static int getScreenWidth(){
+		public static int getScreenWidth() {
 			return mScreenWidth;
 		}
-		
+
 		/** Getter: screen height */
-		public static int getScreenHeight(){
+		public static int getScreenHeight() {
 			return mScreenHeight;
 		}
-		
+
 		/** Draws the ball */
 		public void drawBall() {
 			mCanvasBitmap = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
 					Bitmap.Config.ARGB_8888);
 			mCanvas = new Canvas(mCanvasBitmap);
-			mCanvas.drawCircle(mBall.getPrevX(), mBall.getPrevY(), mBall.getRadius(), mPaint);
+			mCanvas.drawCircle(mBall.getPrevX(), mBall.getPrevY(),
+					mBall.getRadius(), mPaint);
 			mImageView.setImageDrawable(new BitmapDrawable(getResources(),
 					mCanvasBitmap));
 			mRootView.invalidate();
 
 		}
-		
+
 		/** Moves the ball in response to drag */
-		public void moveBall(float x, float y){
+		public void moveBall(float x, float y) {
 			float offSetX = x - mBall.getPrevX();
 			float offSetY = y - mBall.getPrevY();
 			mBall.setPrevX(mBall.getPrevX() + offSetX);
 			mBall.setPrevY(mBall.getPrevY() + offSetY);
 			drawBall();
 		}
-		
+
 		private boolean inCircle(float x, float y, float centerX, float centerY) {
 			double dx = Math.pow(x - centerX, 2);
 			double dy = Math.pow(y - centerY, 2);

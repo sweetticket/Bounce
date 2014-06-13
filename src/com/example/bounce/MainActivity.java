@@ -62,7 +62,7 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	public static class PlaceholderFragment extends Fragment {
 		
-		private static final int FRAME_RATE = 50;
+		private static final int FRAME_RATE = 10;
 		
 		private ImageView mImageView;
 		private Paint mPaint;
@@ -70,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
 		private static int mScreenWidth;
 		private static int mScreenHeight;
 		private BallModel mBall;
-		private boolean mMoveEnabled;
+		private static boolean mMoveEnabled;
 		private Handler mCircleHandler;
 
 		public PlaceholderFragment() {
@@ -98,6 +98,7 @@ public class MainActivity extends ActionBarActivity {
 						public void run() {
 							if (!mMoveEnabled) {
 								mBall.step(FRAME_RATE);
+								
 							}
 							drawBall();
 							mCircleHandler.postDelayed(this, FRAME_RATE);
@@ -151,6 +152,16 @@ public class MainActivity extends ActionBarActivity {
 		/** Getter: screen height */
 		public static int getScreenHeight() {
 			return mScreenHeight;
+		}
+		
+		/** Setter: move enabled */
+		public static void setMoveEnabled(boolean b){
+			mMoveEnabled = b;
+		}
+		
+		/**Getter: move enabled */
+		public static boolean getMoveEnabled(){
+			return mMoveEnabled;
 		}
 
 		/** Draws the ball */

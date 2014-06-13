@@ -1,11 +1,13 @@
 package com.example.bounce;
 
+import android.util.Log;
+
 import com.example.bounce.MainActivity.PlaceholderFragment;
 
 public class BallModel {
 
-	private final static float GRAVITY = 200.0f;
-	private final static float ELASTICITY = 0.8f;
+	private final static float GRAVITY = 3000.0f;
+	private final static float ELASTICITY = 0.9f;
 
 	private final float mRadius = 60;
 
@@ -37,6 +39,7 @@ public class BallModel {
 	/** Setter: set previous y coordinate */
 	public void setPrevY(float y) {
 		mPrevY = y;
+		mVY = 0;
 	}
 
 	/** Getter: ball radius */
@@ -46,14 +49,17 @@ public class BallModel {
 
 	/** Increase mDY */
 	public void step(int time) {
-
+		mVY += GRAVITY * (time / 1000.0f);
+		mPrevY += mVY * (time / 1000.0f);
+		
 		if (mPrevY >= PlaceholderFragment.getScreenHeight() - mRadius) {
-			mVY *= -ELASTICITY;
-		}
-		if (mPrevY < PlaceholderFragment.getScreenHeight() - mRadius
-				|| Math.abs(mVY) > 1) {
-			mVY += GRAVITY * (time / 1000.0f);
-			mPrevY += mVY * (time / 1000.0f);
+			mPrevY = PlaceholderFragment.getScreenHeight() - mRadius;
+			Log.d("step sinking", "sinking: abs(mVY) = "+Math.abs(mVY));
+			if (Math.abs(mVY) > 10) {
+				mVY *= -ELASTICITY;
+			} else {
+				PlaceholderFragment.setMoveEnabled(true);
+			}
 		}
 	}
 }

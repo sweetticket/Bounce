@@ -64,11 +64,9 @@ public class MainActivity extends ActionBarActivity {
 		
 		private static final int FRAME_RATE = 10;
 		
-		private ImageView mImageView;
+		private MyView mMyView;
 		private Paint mPaint;
 		private View mRootView;
-		private static int mScreenWidth;
-		private static int mScreenHeight;
 		private BallModel mBall;
 		private static boolean mMoveEnabled;
 		private Handler mCircleHandler;
@@ -86,10 +84,9 @@ public class MainActivity extends ActionBarActivity {
 			mCircleHandler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
-					mImageView = (ImageView) mRootView
+					mMyView = (MyView) mRootView
 							.findViewById(R.id.backdrop);
-					mScreenWidth = mImageView.getWidth();
-					mScreenHeight = mImageView.getHeight();
+
 					mBall = new BallModel(); // instantiate a new ball
 					mPaint = new Paint();
 					mPaint.setColor(Color.RED);
@@ -100,7 +97,7 @@ public class MainActivity extends ActionBarActivity {
 								mBall.step(FRAME_RATE);
 								
 							}
-							drawBall();
+							mMyView.drawBall(mBall.getPrevX(), mBall.getPrevY(), mBall.getRadius());
 							mCircleHandler.postDelayed(this, FRAME_RATE);
 						}
 
@@ -143,16 +140,6 @@ public class MainActivity extends ActionBarActivity {
 
 			return mRootView;
 		}
-
-		/** Getter: screen width */
-		public static int getScreenWidth() {
-			return mScreenWidth;
-		}
-
-		/** Getter: screen height */
-		public static int getScreenHeight() {
-			return mScreenHeight;
-		}
 		
 		/** Setter: move enabled */
 		public static void setMoveEnabled(boolean b){
@@ -162,19 +149,6 @@ public class MainActivity extends ActionBarActivity {
 		/**Getter: move enabled */
 		public static boolean getMoveEnabled(){
 			return mMoveEnabled;
-		}
-
-		/** Draws the ball */
-		public void drawBall() {
-			Bitmap canvasBit = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
-					Bitmap.Config.ARGB_8888);
-			Canvas canvas = new Canvas(canvasBit);
-			canvas.drawCircle(mBall.getPrevX(), mBall.getPrevY(),
-					mBall.getRadius(), mPaint);
-			mImageView.setImageDrawable(new BitmapDrawable(getResources(),
-					canvasBit));
-			mRootView.invalidate();
-
 		}
 
 		/** Moves the ball in response to drag */

@@ -62,8 +62,6 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	public static class PlaceholderFragment extends Fragment {
 		private ImageView mImageView;
-		private Canvas mCanvas;
-		private Bitmap mCanvasBitmap;
 		private Paint mPaint;
 		private View mRootView;
 		private static int mScreenWidth;
@@ -143,13 +141,13 @@ public class MainActivity extends ActionBarActivity {
 
 		/** Draws the ball */
 		public void drawBall() {
-			mCanvasBitmap = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
+			Bitmap canvasBit = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
 					Bitmap.Config.ARGB_8888);
-			mCanvas = new Canvas(mCanvasBitmap);
-			mCanvas.drawCircle(mBall.getPrevX(), mBall.getPrevY(),
+			Canvas canvas = new Canvas(canvasBit);
+			canvas.drawCircle(mBall.getPrevX(), mBall.getPrevY(),
 					mBall.getRadius(), mPaint);
 			mImageView.setImageDrawable(new BitmapDrawable(getResources(),
-					mCanvasBitmap));
+					canvasBit));
 			mRootView.invalidate();
 
 		}

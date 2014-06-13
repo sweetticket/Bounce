@@ -9,12 +9,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,10 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.os.Build;
 
 public class MainActivity extends ActionBarActivity {
@@ -76,7 +71,7 @@ public class MainActivity extends ActionBarActivity {
 		public static int mScreenHeight;
 		public float mPrevX;
 		public float mPrevY;
-
+		
 		public PlaceholderFragment() {
 		}
 
@@ -94,6 +89,8 @@ public class MainActivity extends ActionBarActivity {
 					mScreenHeight = mImageView.getHeight();
 					mPrevX = mScreenWidth / 2;
 					mPrevY = mScreenHeight / 2;
+					mPaint = new Paint();
+					mPaint.setColor(Color.RED);
 					drawBall();
 				}
 			}, 500);
@@ -135,8 +132,6 @@ public class MainActivity extends ActionBarActivity {
 			mBall = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
 					Bitmap.Config.ARGB_8888);
 			mCanvas = new Canvas(mBall);
-			mPaint = new Paint();
-			mPaint.setColor(Color.RED);
 			mCanvas.drawCircle(mPrevX, mPrevY, mRadius, mPaint);
 			mImageView.setImageDrawable(new BitmapDrawable(getResources(),
 					mBall));

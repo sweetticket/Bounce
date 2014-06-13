@@ -3,101 +3,197 @@ package com.example.bounce;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MotionEventCompat;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.os.Build;
 
 public class MainActivity extends ActionBarActivity {
-	
-	
-	
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-       
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }
-    
-    }
 
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+		if (savedInstanceState == null) {
+			getSupportFragmentManager().beginTransaction()
+					.add(R.id.container, new PlaceholderFragment()).commit();
+		}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+	}
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-    	private ImageView mImageView;
-    	private Canvas mCanvas;
-    	private Bitmap mBall;
-    	private int mWidth;
-    	private int mHeight;
-    	private Paint mPaint;
-    	
-        public PlaceholderFragment() {
-        }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            
-            
-            mImageView = (ImageView)rootView.findViewById(R.id.backdrop);
-            mBall = Bitmap.createBitmap(100,100, Bitmap.Config.ARGB_8888);
-            return rootView;
-        }
-        
-        @Override
-        public void onViewCreated(View view, Bundle savedInstanceState){
-        	 mCanvas = new Canvas(mBall);
-             mPaint = new Paint();
-             mPaint.setColor(Color.RED);
-             mWidth = mImageView.getWidth();
-             mHeight = mImageView.getHeight();
-             Log.d("width height", "mWidth: "+mWidth+", mHeight: "+mHeight);
-             mCanvas.drawCircle(mWidth/2, -mHeight/2, 20, mPaint);
-             
-             mImageView.setImageDrawable(new BitmapDrawable(getResources(), mBall));
-        }
-    }
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * A placeholder fragment containing a simple view.
+	 */
+	public static class PlaceholderFragment extends Fragment {
+		
+		private static final int FRAME_RATE = 10;
+		
+		private ImageView mImageView;
+		private Paint mPaint;
+		private View mRootView;
+		private static int mScreenWidth;
+		private static int mScreenHeight;
+		private BallModel mBall;
+		private static boolean mMoveEnabled;
+		private Handler mCircleHandler;
+
+		public PlaceholderFragment() {
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			mRootView = inflater.inflate(R.layout.fragment_main, container,
+					false);
+			mMoveEnabled = false;
+			mCircleHandler = new Handler();
+			mCircleHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					mImageView = (ImageView) mRootView
+							.findViewById(R.id.backdrop);
+					mScreenWidth = mImageView.getWidth();
+					mScreenHeight = mImageView.getHeight();
+					mBall = new BallModel(); // instantiate a new ball
+					mPaint = new Paint();
+					mPaint.setColor(Color.RED);
+					mCircleHandler.postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							if (!mMoveEnabled) {
+								mBall.step(FRAME_RATE);
+								
+							}
+							drawBall();
+							mCircleHandler.postDelayed(this, FRAME_RATE);
+						}
+
+					}, FRAME_RATE);
+				}
+			}, 500);
+
+			mRootView.setOnTouchListener(new View.OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View view, MotionEvent event) {
+					int action = MotionEventCompat.getActionMasked(event);
+					float x = event.getX();
+					float y = event.getY();
+
+					switch (action) {
+					case (MotionEvent.ACTION_DOWN): {
+						if (inCircle(x, y, mBall.getPrevX(), mBall.getPrevY())) {
+							mMoveEnabled = true;
+							Log.d("motion event", "Action was DOWN");
+						}
+						return true;
+					}
+					case (MotionEvent.ACTION_MOVE):
+						if (mMoveEnabled) {
+							moveBall(x, y);
+						}
+						Log.d("motion event", "Action was MOVE");
+						return true;
+					case (MotionEvent.ACTION_UP):
+						mMoveEnabled = false;
+						Log.d("motion event", "Action was UP");
+						return true;
+					default:
+						return true;
+					}
+
+				}
+			});
+
+			return mRootView;
+		}
+
+		/** Getter: screen width */
+		public static int getScreenWidth() {
+			return mScreenWidth;
+		}
+
+		/** Getter: screen height */
+		public static int getScreenHeight() {
+			return mScreenHeight;
+		}
+		
+		/** Setter: move enabled */
+		public static void setMoveEnabled(boolean b){
+			mMoveEnabled = b;
+		}
+		
+		/**Getter: move enabled */
+		public static boolean getMoveEnabled(){
+			return mMoveEnabled;
+		}
+
+		/** Draws the ball */
+		public void drawBall() {
+			Bitmap canvasBit = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
+					Bitmap.Config.ARGB_8888);
+			Canvas canvas = new Canvas(canvasBit);
+			canvas.drawCircle(mBall.getPrevX(), mBall.getPrevY(),
+					mBall.getRadius(), mPaint);
+			mImageView.setImageDrawable(new BitmapDrawable(getResources(),
+					canvasBit));
+			mRootView.invalidate();
+
+		}
+
+		/** Moves the ball in response to drag */
+		public void moveBall(float x, float y) {
+			float offSetX = x - mBall.getPrevX();
+			float offSetY = y - mBall.getPrevY();
+			mBall.setPrevX(mBall.getPrevX() + offSetX);
+			mBall.setPrevY(mBall.getPrevY() + offSetY);
+		}
+
+		private boolean inCircle(float x, float y, float centerX, float centerY) {
+			double dx = Math.pow(x - centerX, 2);
+			double dy = Math.pow(y - centerY, 2);
+			if ((dx + dy) <= Math.pow(mBall.getRadius(), 2)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 
 }

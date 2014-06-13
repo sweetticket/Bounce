@@ -61,13 +61,17 @@ public class MainActivity extends ActionBarActivity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
+		
+		private static final int FRAME_RATE = 50;
+		
 		private ImageView mImageView;
 		private Paint mPaint;
 		private View mRootView;
 		private static int mScreenWidth;
 		private static int mScreenHeight;
 		private BallModel mBall;
-		private boolean moveEnabled;
+		private boolean mMoveEnabled;
+		private Handler mCircleHandler;
 
 		public PlaceholderFragment() {
 		}
@@ -77,9 +81,9 @@ public class MainActivity extends ActionBarActivity {
 				Bundle savedInstanceState) {
 			mRootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
-			moveEnabled = false;
-			Handler circleHandler = new Handler();
-			circleHandler.postDelayed(new Runnable() {
+			mMoveEnabled = false;
+			mCircleHandler = new Handler();
+			mCircleHandler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
 					mImageView = (ImageView) mRootView
@@ -89,7 +93,17 @@ public class MainActivity extends ActionBarActivity {
 					mBall = new BallModel(); // instantiate a new ball
 					mPaint = new Paint();
 					mPaint.setColor(Color.RED);
-					drawBall();
+					mCircleHandler.postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							if (!mMoveEnabled) {
+								mBall.step(FRAME_RATE);
+							}
+							drawBall();
+							mCircleHandler.postDelayed(this, FRAME_RATE);
+						}
+
+					}, FRAME_RATE);
 				}
 			}, 500);
 
@@ -104,19 +118,19 @@ public class MainActivity extends ActionBarActivity {
 					switch (action) {
 					case (MotionEvent.ACTION_DOWN): {
 						if (inCircle(x, y, mBall.getPrevX(), mBall.getPrevY())) {
-							moveEnabled = true;
+							mMoveEnabled = true;
 							Log.d("motion event", "Action was DOWN");
 						}
 						return true;
 					}
 					case (MotionEvent.ACTION_MOVE):
-						if (moveEnabled) {
+						if (mMoveEnabled) {
 							moveBall(x, y);
 						}
 						Log.d("motion event", "Action was MOVE");
 						return true;
 					case (MotionEvent.ACTION_UP):
-						moveEnabled = false;
+						mMoveEnabled = false;
 						Log.d("motion event", "Action was UP");
 						return true;
 					default:
@@ -158,7 +172,6 @@ public class MainActivity extends ActionBarActivity {
 			float offSetY = y - mBall.getPrevY();
 			mBall.setPrevX(mBall.getPrevX() + offSetX);
 			mBall.setPrevY(mBall.getPrevY() + offSetY);
-			drawBall();
 		}
 
 		private boolean inCircle(float x, float y, float centerX, float centerY) {

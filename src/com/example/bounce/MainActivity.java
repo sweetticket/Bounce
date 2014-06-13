@@ -61,16 +61,14 @@ public class MainActivity extends ActionBarActivity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
-		public ImageView mImageView;
-		public Canvas mCanvas;
-		public Bitmap mBall;
-		public Paint mPaint;
-		public View mRootView;
-		public static final float mRadius = 60;
-		public static int mScreenWidth;
-		public static int mScreenHeight;
-		public float mPrevX;
-		public float mPrevY;
+		private ImageView mImageView;
+		private Canvas mCanvas;
+		private Bitmap mCanvasBitmap;
+		private Paint mPaint;
+		private View mRootView;
+		private static int mScreenWidth;
+		private static int mScreenHeight;
+		private BallModel mBall;
 		
 		public PlaceholderFragment() {
 		}
@@ -87,8 +85,7 @@ public class MainActivity extends ActionBarActivity {
 					mImageView = (ImageView) mRootView.findViewById(R.id.backdrop);
 					mScreenWidth = mImageView.getWidth();
 					mScreenHeight = mImageView.getHeight();
-					mPrevX = mScreenWidth / 2;
-					mPrevY = mScreenHeight / 2;
+					mBall = new BallModel(); // instantiate a new ball
 					mPaint = new Paint();
 					mPaint.setColor(Color.RED);
 					drawBall();
@@ -103,7 +100,7 @@ public class MainActivity extends ActionBarActivity {
 					float x = event.getX();
 					float y = event.getY();
 
-					if (inCircle(x, y, mPrevX, mPrevY)) {
+					if (inCircle(x, y, mBall.getPrevX(), mBall.getPrevY())) {
 						switch (action) {
 						case (MotionEvent.ACTION_DOWN): {
 							Log.d("motion event", "Action was DOWN");
@@ -123,35 +120,45 @@ public class MainActivity extends ActionBarActivity {
 						return false;
 				}
 			});
-
+			
 			return mRootView;
+		}
+		
+		/** Getter: screen width */
+		public static int getScreenWidth(){
+			return mScreenWidth;
+		}
+		
+		/** Getter: screen height */
+		public static int getScreenHeight(){
+			return mScreenHeight;
 		}
 		
 		/** Draws the ball */
 		public void drawBall() {
-			mBall = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
+			mCanvasBitmap = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
 					Bitmap.Config.ARGB_8888);
-			mCanvas = new Canvas(mBall);
-			mCanvas.drawCircle(mPrevX, mPrevY, mRadius, mPaint);
+			mCanvas = new Canvas(mCanvasBitmap);
+			mCanvas.drawCircle(mBall.getPrevX(), mBall.getPrevY(), mBall.getRadius(), mPaint);
 			mImageView.setImageDrawable(new BitmapDrawable(getResources(),
-					mBall));
+					mCanvasBitmap));
 			mRootView.invalidate();
 
 		}
 		
 		/** Moves the ball in response to drag */
 		public void moveBall(float x, float y){
-			float offSetX = x - mPrevX;
-			float offSetY = y - mPrevY;
-			mPrevX = mPrevX + offSetX;
-			mPrevY = mPrevY + offSetY;
+			float offSetX = x - mBall.getPrevX();
+			float offSetY = y - mBall.getPrevY();
+			mBall.setPrevX(mBall.getPrevX() + offSetX);
+			mBall.setPrevY(mBall.getPrevY() + offSetY);
 			drawBall();
 		}
 		
 		private boolean inCircle(float x, float y, float centerX, float centerY) {
 			double dx = Math.pow(x - centerX, 2);
 			double dy = Math.pow(y - centerY, 2);
-			if ((dx + dy) <= Math.pow(mRadius, 2)) {
+			if ((dx + dy) <= Math.pow(mBall.getRadius(), 2)) {
 				return true;
 			} else {
 				return false;

@@ -74,8 +74,8 @@ public class MainActivity extends ActionBarActivity {
 		public static final float mRadius = 60;
 		public static int mScreenWidth;
 		public static int mScreenHeight;
-		public float mCenterX;
-		public float mCenterY;
+		public float mPrevX;
+		public float mPrevY;
 
 		public PlaceholderFragment() {
 		}
@@ -92,8 +92,8 @@ public class MainActivity extends ActionBarActivity {
 					mImageView = (ImageView) mRootView.findViewById(R.id.backdrop);
 					mScreenWidth = mImageView.getWidth();
 					mScreenHeight = mImageView.getHeight();
-					mCenterX = mScreenWidth / 2;
-					mCenterY = mScreenHeight / 2;
+					mPrevX = mScreenWidth / 2;
+					mPrevY = mScreenHeight / 2;
 					drawBall();
 				}
 			}, 500);
@@ -106,7 +106,7 @@ public class MainActivity extends ActionBarActivity {
 					float x = event.getX();
 					float y = event.getY();
 
-					if (inCircle(x, y, mCenterX, mCenterY)) {
+					if (inCircle(x, y, mPrevX, mPrevY)) {
 						switch (action) {
 						case (MotionEvent.ACTION_DOWN): {
 							Log.d("motion event", "Action was DOWN");
@@ -114,6 +114,7 @@ public class MainActivity extends ActionBarActivity {
 						}
 						case (MotionEvent.ACTION_MOVE):
 							Log.d("motion event", "Action was MOVE");
+							moveBall(x,y);
 							return true;
 						case (MotionEvent.ACTION_UP):
 							Log.d("motion event", "Action was UP");
@@ -128,18 +129,28 @@ public class MainActivity extends ActionBarActivity {
 
 			return mRootView;
 		}
-
+		
+		/** Draws the ball */
 		public void drawBall() {
 			mBall = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
 					Bitmap.Config.ARGB_8888);
 			mCanvas = new Canvas(mBall);
 			mPaint = new Paint();
 			mPaint.setColor(Color.RED);
-			mCanvas.drawCircle(mCenterX, mCenterY, mRadius, mPaint);
+			mCanvas.drawCircle(mPrevX, mPrevY, mRadius, mPaint);
 			mImageView.setImageDrawable(new BitmapDrawable(getResources(),
 					mBall));
 			mRootView.invalidate();
 
+		}
+		
+		/** Moves the ball in response to drag */
+		public void moveBall(float x, float y){
+			float offSetX = x - mPrevX;
+			float offSetY = y - mPrevY;
+			mPrevX = mPrevX + offSetX;
+			mPrevY = mPrevY + offSetY;
+			drawBall();
 		}
 		
 		private boolean inCircle(float x, float y, float centerX, float centerY) {

@@ -140,7 +140,7 @@ public class BallModel {
 				mVY = 0;
 				//PlaceholderFragment.setMoveEnabled(true);
 				mVX *= FLOOR_FRICTION;
-				if (Math.abs(mVX) < 5){
+				if (Math.abs(mVX) < 10){
 					PlaceholderFragment.setMoveEnabled(true);
 					mVX = 0;
 				}

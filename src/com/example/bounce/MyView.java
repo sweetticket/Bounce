@@ -38,20 +38,22 @@ public class MyView extends ImageView {
 	public void init(){
 		mPaint = new Paint();
 		mPaint.setColor(Color.RED);
-		mScreenWidth = getWidth();
-		mScreenHeight = getHeight();
-		mXPos = mScreenWidth / 2;
-		mYPos = mScreenHeight / 2;
 		Log.d("dims", "dims: " + mScreenWidth + " x " + mScreenWidth);
 
 	}
 	
 	@Override
+	public void onSizeChanged(int w, int h, int oldw, int oldh){
+		super.onSizeChanged(w, h, oldw, oldh);
+		mScreenWidth = w;
+		mScreenHeight = h;
+		mXPos = mScreenWidth / 2;
+		mYPos = mScreenHeight / 2;
+	}
+	
+	@Override
 	public void onDraw(Canvas canvas){
 		super.onDraw(canvas);
-		if (mScreenWidth == 0){
-			initScreenDims();
-		}
 		drawBall();
 	}
 	

@@ -8,6 +8,7 @@ public class BallModel {
 
 	private final static float GRAVITY = 3000.0f;
 	private final static float ELASTICITY = 0.9f;
+	private final static float FLOOR_FRICTION = 0.5f;
 	private final static float mRadius = 60;
 
 	private float mCurrentX;
@@ -70,28 +71,54 @@ public class BallModel {
 	public static float getRadius() {
 		return mRadius;
 	}
-
+	
+	/** Getter: x velocity */
+	public float getVX(){
+		return mVX;
+	}
+	
+	/** Setter: x velocity */
+	public void setVX(float vx){
+		mVX = vx;
+	}
+	
+	/** Getter: y velocity */
+	public float getVY(){
+		return mVY;
+	}
+	
+	/** Setter: y velocity */
+	public void setVY(float vy){
+		mVY = vy;
+	}
+	
 	/** Change velocities */
-	public void setVelocities(int time){
-		mVX = (mCurrentX - mPrevX) / (time / 100.0f);
-		mVY = (mCurrentY - mPrevY) / (time / 100.0f);
+	public void setVelocities(int time, int counter) {
+		
+		if (counter >= 10) {
+			mVX = 0;
+			mVY = 0;
+		} else {
+			mVX = (mCurrentX - mPrevX) / (time / 100.0f);
+			mVY = (mCurrentY - mPrevY) / (time / 100.0f);
+		}
 		mPrevX = 0;
 		mPrevY = 0;
 	}
-	
+
 	/** Change location with velocities */
 	public void step(int time, int screenHeight, int screenWidth) {
 		mVY += GRAVITY * (time / 1000.0f);
 		mCurrentY += mVY * (time / 1000.0f);
-		
+
 		mCurrentX += mVX * (time / 1000.0f);
 
 		if (mCurrentX >= screenWidth - mRadius) {
 			mCurrentX = screenWidth - mRadius;
 			mVX *= -ELASTICITY;
 		}
-		
-		if (mCurrentX <= mRadius){
+
+		if (mCurrentX <= mRadius) {
 			mCurrentX = mRadius;
 			mVX *= -ELASTICITY;
 		}
@@ -107,6 +134,10 @@ public class BallModel {
 				mVY *= -ELASTICITY;
 			} else {
 				PlaceholderFragment.setMoveEnabled(true);
+				mVX *= FLOOR_FRICTION;
+				if (Math.abs(mVX) < 20){
+					mVX = 0;
+				}
 			}
 		}
 

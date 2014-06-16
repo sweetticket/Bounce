@@ -69,6 +69,8 @@ public class MainActivity extends ActionBarActivity {
 		private BallModel mBall;
 		private static boolean mMoveEnabled;
 		private Handler mCircleHandler;
+		public int mCounter;
+		public boolean mCounting;
 
 		public PlaceholderFragment() {
 		}
@@ -79,6 +81,8 @@ public class MainActivity extends ActionBarActivity {
 			mRootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 			mMoveEnabled = false;
+			mCounting = false;
+			mCounter = 0;
 			mCircleHandler = new Handler();
 			mCircleHandler.postDelayed(new Runnable() {
 				@Override
@@ -89,12 +93,14 @@ public class MainActivity extends ActionBarActivity {
 					mCircleHandler.postDelayed(new Runnable() {
 						@Override
 						public void run() {
+							if (mCounting) {
+								mCounter++;
+							}
 							if (!mMoveEnabled) {
 								stepBall();
 							}
 							mCircleHandler.postDelayed(this, FRAME_RATE);
 						}
-
 					}, FRAME_RATE);
 				}
 			}, 500);
@@ -111,6 +117,7 @@ public class MainActivity extends ActionBarActivity {
 					case (MotionEvent.ACTION_DOWN): {
 						if (inCircle(x, y, mBall.getCurrentX(),
 								mBall.getCurrentY())) {
+							startCounter();
 							mMoveEnabled = true;
 							Log.d("motion event", "Action was DOWN");
 							mBall.setPrevX(x);
@@ -125,8 +132,9 @@ public class MainActivity extends ActionBarActivity {
 						Log.d("motion event", "Action was MOVE");
 						return true;
 					case (MotionEvent.ACTION_UP):
-						if (mMoveEnabled){
-						mBall.setVelocities(FRAME_RATE);
+						if (mMoveEnabled) {
+							mBall.setVelocities(FRAME_RATE, mCounter);
+							stopCounter();
 						}
 						mMoveEnabled = false;
 						Log.d("motion event", "Action was UP");
@@ -139,6 +147,17 @@ public class MainActivity extends ActionBarActivity {
 			});
 
 			return mRootView;
+		}
+
+		/** Start counter */
+		public void startCounter() {
+			mCounting = true;
+		}
+
+		/** Stop counter */
+		public void stopCounter() {
+			mCounting = false;
+			mCounter = 0;
 		}
 
 		/** Setter: move enabled */
@@ -158,6 +177,11 @@ public class MainActivity extends ActionBarActivity {
 			mBall.setCurrentX(mBall.getCurrentX() + offSetX);
 			mBall.setCurrentY(mBall.getCurrentY() + offSetY);
 			mMyView.setPosition(mBall.getCurrentX(), mBall.getCurrentY());
+			if ((Math.abs(offSetY) + Math.abs(offSetX) < 20) && mCounter > 4){
+				mBall.setPrevX(mBall.getCurrentX());
+				mBall.setPrevY(mBall.getCurrentY());
+				mCounter = 0;
+			}
 
 		}
 

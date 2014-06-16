@@ -42,19 +42,21 @@ public class MyView extends ImageView {
 		mScreenHeight = getHeight();
 		mXPos = mScreenWidth / 2;
 		mYPos = mScreenHeight / 2;
+		Log.d("dims", "dims: " + mScreenWidth + " x " + mScreenWidth);
+
 	}
 	
 	@Override
 	public void onDraw(Canvas canvas){
 		super.onDraw(canvas);
+		if (mScreenWidth == 0){
+			initScreenDims();
+		}
 		drawBall();
 	}
 	
 	/** Draws the ball */
 	public void drawBall() {
-		if (mScreenWidth == 0){
-			initScreenDims();
-		}
 		Bitmap canvasBit = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
 				Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(canvasBit);

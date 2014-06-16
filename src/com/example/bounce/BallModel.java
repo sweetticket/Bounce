@@ -10,13 +10,39 @@ public class BallModel {
 	private final static float ELASTICITY = 0.9f;
 	private final static float mRadius = 60;
 
+	private float mCurrentX;
+	private float mCurrentY;
 	private float mPrevX;
 	private float mPrevY;
 	private float mVY; // current Y velocity
+	private float mVX; // current X velocity
 
 	public BallModel(int screenWidth, int screenHeight) {
-		mPrevX = screenWidth / 2;
-		mPrevY = screenHeight / 2;
+		mCurrentX = screenWidth / 2;
+		mCurrentY = screenHeight / 2;
+		mVY = 0;
+		mVX = 0;
+	}
+
+	/** Getter: current x coordinate */
+	public float getCurrentX() {
+		return mCurrentX;
+	}
+
+	/** Setter: set current x coordinate */
+	public void setCurrentX(float x) {
+		mCurrentX = x;
+		mVX = 0;
+	}
+
+	/** Getter: current x coordinate */
+	public float getCurrentY() {
+		return mCurrentY;
+	}
+
+	/** Setter: set current y coordinate */
+	public void setCurrentY(float y) {
+		mCurrentY = y;
 		mVY = 0;
 	}
 
@@ -38,7 +64,6 @@ public class BallModel {
 	/** Setter: set previous y coordinate */
 	public void setPrevY(float y) {
 		mPrevY = y;
-		mVY = 0;
 	}
 
 	/** Getter: ball radius */
@@ -46,18 +71,44 @@ public class BallModel {
 		return mRadius;
 	}
 
-	/** Increase mDY */
-	public void step(int time, int screenHeight) {
+	/** Change velocities */
+	public void setVelocities(int time){
+		mVX = (mCurrentX - mPrevX) / (time / 100.0f);
+		mVY = (mCurrentY - mPrevY) / (time / 100.0f);
+		mPrevX = 0;
+		mPrevY = 0;
+	}
+	
+	/** Change location with velocities */
+	public void step(int time, int screenHeight, int screenWidth) {
 		mVY += GRAVITY * (time / 1000.0f);
-		mPrevY += mVY * (time / 1000.0f);
+		mCurrentY += mVY * (time / 1000.0f);
 		
-		if (mPrevY >= screenHeight - mRadius) {
-			mPrevY = screenHeight - mRadius;
+		mCurrentX += mVX * (time / 1000.0f);
+
+		if (mCurrentX >= screenWidth - mRadius) {
+			mCurrentX = screenWidth - mRadius;
+			mVX *= -ELASTICITY;
+		}
+		
+		if (mCurrentX <= mRadius){
+			mCurrentX = mRadius;
+			mVX *= -ELASTICITY;
+		}
+
+		if (mCurrentY <= mRadius) {
+			mCurrentY = mRadius;
+			mVY *= -ELASTICITY;
+		}
+
+		if (mCurrentY >= screenHeight - mRadius) {
+			mCurrentY = screenHeight - mRadius;
 			if (Math.abs(mVY) > 10) {
 				mVY *= -ELASTICITY;
 			} else {
 				PlaceholderFragment.setMoveEnabled(true);
 			}
 		}
+
 	}
 }

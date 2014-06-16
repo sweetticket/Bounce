@@ -61,9 +61,9 @@ public class MainActivity extends ActionBarActivity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
-		
+
 		private static final int FRAME_RATE = 10;
-		
+
 		private MyView mMyView;
 		private View mRootView;
 		private BallModel mBall;
@@ -83,9 +83,9 @@ public class MainActivity extends ActionBarActivity {
 			mCircleHandler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
-					mMyView = (MyView) mRootView
-							.findViewById(R.id.backdrop);
-					mBall = new BallModel(mMyView.getScreenWidth(), mMyView.getScreenHeight()); // instantiate a new ball
+					mMyView = (MyView) mRootView.findViewById(R.id.backdrop);
+					mBall = new BallModel(mMyView.getScreenWidth(), mMyView
+							.getScreenHeight()); // instantiate a new ball
 					mCircleHandler.postDelayed(new Runnable() {
 						@Override
 						public void run() {
@@ -109,9 +109,12 @@ public class MainActivity extends ActionBarActivity {
 
 					switch (action) {
 					case (MotionEvent.ACTION_DOWN): {
-						if (inCircle(x, y, mBall.getPrevX(), mBall.getPrevY())) {
+						if (inCircle(x, y, mBall.getCurrentX(),
+								mBall.getCurrentY())) {
 							mMoveEnabled = true;
 							Log.d("motion event", "Action was DOWN");
+							mBall.setPrevX(x);
+							mBall.setPrevY(y);
 						}
 						return true;
 					}
@@ -122,6 +125,9 @@ public class MainActivity extends ActionBarActivity {
 						Log.d("motion event", "Action was MOVE");
 						return true;
 					case (MotionEvent.ACTION_UP):
+						if (mMoveEnabled){
+						mBall.setVelocities(FRAME_RATE);
+						}
 						mMoveEnabled = false;
 						Log.d("motion event", "Action was UP");
 						return true;
@@ -134,24 +140,24 @@ public class MainActivity extends ActionBarActivity {
 
 			return mRootView;
 		}
-		
+
 		/** Setter: move enabled */
-		public static void setMoveEnabled(boolean b){
+		public static void setMoveEnabled(boolean b) {
 			mMoveEnabled = b;
 		}
-		
-		/**Getter: move enabled */
-		public static boolean getMoveEnabled(){
+
+		/** Getter: move enabled */
+		public static boolean getMoveEnabled() {
 			return mMoveEnabled;
 		}
 
 		/** Moves the ball in response to drag */
 		public void moveBall(float x, float y) {
-			float offSetX = x - mBall.getPrevX();
-			float offSetY = y - mBall.getPrevY();
-			mBall.setPrevX(mBall.getPrevX() + offSetX);
-			mBall.setPrevY(mBall.getPrevY() + offSetY);
-			mMyView.setPosition(mBall.getPrevX(), mBall.getPrevY());
+			float offSetX = x - mBall.getCurrentX();
+			float offSetY = y - mBall.getCurrentY();
+			mBall.setCurrentX(mBall.getCurrentX() + offSetX);
+			mBall.setCurrentY(mBall.getCurrentY() + offSetY);
+			mMyView.setPosition(mBall.getCurrentX(), mBall.getCurrentY());
 
 		}
 
@@ -164,10 +170,11 @@ public class MainActivity extends ActionBarActivity {
 				return false;
 			}
 		}
-		
-		private void stepBall(){
-			mBall.step(FRAME_RATE, mMyView.getScreenHeight());
-			mMyView.setPosition(mBall.getPrevX(), mBall.getPrevY());
+
+		private void stepBall() {
+			mBall.step(FRAME_RATE, mMyView.getScreenHeight(),
+					mMyView.getScreenWidth());
+			mMyView.setPosition(mBall.getCurrentX(), mBall.getCurrentY());
 		}
 	}
 

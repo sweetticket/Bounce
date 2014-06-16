@@ -8,8 +8,7 @@ public class BallModel {
 
 	private final static float GRAVITY = 3000.0f;
 	private final static float ELASTICITY = 0.9f;
-
-	private final float mRadius = 60;
+	private final static float mRadius = 60;
 
 	private float mPrevX;
 	private float mPrevY;
@@ -45,7 +44,7 @@ public class BallModel {
 	}
 
 	/** Getter: ball radius */
-	public float getRadius() {
+	public static float getRadius() {
 		return mRadius;
 	}
 

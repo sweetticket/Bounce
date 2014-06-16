@@ -91,9 +91,9 @@ public class MainActivity extends ActionBarActivity {
 						@Override
 						public void run() {
 							if (!mMoveEnabled) {
-								mBall.step(FRAME_RATE);
+								stepBall();
 							}
-							mMyView.drawBall(mBall.getPrevX(), mBall.getPrevY(), mBall.getRadius());
+							//mMyView.drawBall(mBall.getPrevX(), mBall.getPrevY(), mBall.getRadius());
 							mCircleHandler.postDelayed(this, FRAME_RATE);
 						}
 
@@ -163,6 +163,11 @@ public class MainActivity extends ActionBarActivity {
 			} else {
 				return false;
 			}
+		}
+		
+		private void stepBall(){
+			mBall.step(FRAME_RATE);
+			mMyView.setPosition(mBall.getPrevX(), mBall.getPrevY());
 		}
 	}
 

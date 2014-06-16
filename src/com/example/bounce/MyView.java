@@ -1,9 +1,11 @@
 package com.example.bounce;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
@@ -44,15 +46,24 @@ public class MyView extends ImageView {
 		mCanvas = canvas;
 		mScreenWidth = getWidth();
 		mScreenHeight = getHeight();
+		drawBall();
 	}
 	
 	/** Draws the ball */
-	public void drawBall(float x, float y, float r) {
-		mCanvas.drawCircle(x, y, r, mPaint);
+	public void drawBall() {
+		Bitmap canvasBit = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
+				Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(canvasBit);
+		canvas.drawCircle(mXPos,mYPos,
+				BallModel.getRadius(), mPaint);
+		setImageDrawable(new BitmapDrawable(getResources(),
+				canvasBit));
+		this.invalidate();
 	}
 		
 	public void setPosition(float x, float y){
-		
+		mXPos = x;
+		mYPos = y;
 	}
 
 	public int getScreenWidth(){

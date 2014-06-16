@@ -174,8 +174,10 @@ public class MainActivity extends ActionBarActivity {
 		public void moveBall(float x, float y) {
 			float offSetX = x - mBall.getCurrentX();
 			float offSetY = y - mBall.getCurrentY();
-			mBall.setCurrentX(mBall.getCurrentX() + offSetX);
-			mBall.setCurrentY(mBall.getCurrentY() + offSetY);
+			mBall.setCurrentX(Math.max(mBall.getCurrentX() + offSetX, mBall.getMinX()));
+			mBall.setCurrentX(Math.min(mBall.getCurrentX(), mBall.getMaxX()));
+			mBall.setCurrentY(Math.max(mBall.getCurrentY() + offSetY, mBall.getMinY()));
+			mBall.setCurrentY(Math.min(mBall.getCurrentY(), mBall.getMaxY()));
 			mMyView.setPosition(mBall.getCurrentX(), mBall.getCurrentY());
 			if ((Math.abs(offSetY) + Math.abs(offSetX) < 20) && mCounter > 4){
 				mBall.setPrevX(mBall.getCurrentX());
@@ -188,7 +190,7 @@ public class MainActivity extends ActionBarActivity {
 		private boolean inCircle(float x, float y, float centerX, float centerY) {
 			double dx = Math.pow(x - centerX, 2);
 			double dy = Math.pow(y - centerY, 2);
-			if ((dx + dy) <= Math.pow(BallModel.getRadius(), 2)) {
+			if ((dx + dy) <= Math.pow(BallModel.RADIUS, 2)) {
 				return true;
 			} else {
 				return false;

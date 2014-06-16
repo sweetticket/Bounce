@@ -63,7 +63,7 @@ public class MyView extends ImageView {
 				Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(canvasBit);
 		canvas.drawCircle(mXPos,mYPos,
-				BallModel.getRadius(), mPaint);
+				BallModel.RADIUS, mPaint);
 		setImageDrawable(new BitmapDrawable(getResources(),
 				canvasBit));
 		this.invalidate();

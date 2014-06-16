@@ -9,8 +9,13 @@ public class BallModel {
 	private final static float GRAVITY = 3000.0f;
 	private final static float ELASTICITY = 0.9f;
 	private final static float FLOOR_FRICTION = 0.5f;
-	private final static float mRadius = 60;
+	public final static float RADIUS = 60;
 
+	private float mMaxX;
+	private float mMaxY;
+	private float mMinX;
+	private float mMinY;
+	
 	private float mCurrentX;
 	private float mCurrentY;
 	private float mPrevX;
@@ -23,6 +28,10 @@ public class BallModel {
 		mCurrentY = screenHeight / 2;
 		mVY = 0;
 		mVX = 0;
+		mMaxX = screenWidth - RADIUS;
+		mMinX = RADIUS;
+		mMaxY = screenHeight - RADIUS;
+		mMinY = RADIUS;
 	}
 
 	/** Getter: current x coordinate */
@@ -66,30 +75,25 @@ public class BallModel {
 	public void setPrevY(float y) {
 		mPrevY = y;
 	}
-
-	/** Getter: ball radius */
-	public static float getRadius() {
-		return mRadius;
+	
+	/** Getter: max x position */
+	public float getMaxX(){
+		return mMaxX;
 	}
 	
-	/** Getter: x velocity */
-	public float getVX(){
-		return mVX;
+	/** Getter: min x position */
+	public float getMinX(){
+		return mMinX;
 	}
 	
-	/** Setter: x velocity */
-	public void setVX(float vx){
-		mVX = vx;
+	/** Getter: max y position */
+	public float getMaxY(){
+		return mMaxY;
 	}
 	
-	/** Getter: y velocity */
-	public float getVY(){
-		return mVY;
-	}
-	
-	/** Setter: y velocity */
-	public void setVY(float vy){
-		mVY = vy;
+	/** Getter: min y position */
+	public float getMinY(){
+		return mMinY;
 	}
 	
 	/** Change velocities */
@@ -113,29 +117,31 @@ public class BallModel {
 
 		mCurrentX += mVX * (time / 1000.0f);
 
-		if (mCurrentX >= screenWidth - mRadius) {
-			mCurrentX = screenWidth - mRadius;
+		if (mCurrentX >= mMaxX) {
+			mCurrentX = mMaxX;
 			mVX *= -ELASTICITY;
 		}
 
-		if (mCurrentX <= mRadius) {
-			mCurrentX = mRadius;
+		if (mCurrentX <= mMinX) {
+			mCurrentX = mMinX;
 			mVX *= -ELASTICITY;
 		}
 
-		if (mCurrentY <= mRadius) {
-			mCurrentY = mRadius;
+		if (mCurrentY <= mMinY) {
+			mCurrentY = mMinY;
 			mVY *= -ELASTICITY;
 		}
 
-		if (mCurrentY >= screenHeight - mRadius) {
-			mCurrentY = screenHeight - mRadius;
+		if (mCurrentY >= mMaxY) {
+			mCurrentY = mMaxY;
 			if (Math.abs(mVY) > 10) {
 				mVY *= -ELASTICITY;
 			} else {
-				PlaceholderFragment.setMoveEnabled(true);
+				mVY = 0;
+				//PlaceholderFragment.setMoveEnabled(true);
 				mVX *= FLOOR_FRICTION;
-				if (Math.abs(mVX) < 20){
+				if (Math.abs(mVX) < 5){
+					PlaceholderFragment.setMoveEnabled(true);
 					mVX = 0;
 				}
 			}

@@ -17,7 +17,7 @@ public class MyView extends ImageView {
 	private int mScreenWidth;
 	private int mScreenHeight;
 	private float mXPos;
-	private float mYPos;	
+	private float mYPos;
 
 	
 	public MyView(Context context) {

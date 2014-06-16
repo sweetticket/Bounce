@@ -13,12 +13,10 @@ public class BallModel {
 	private float mPrevX;
 	private float mPrevY;
 	private float mVY; // current Y velocity
-	private MyView mMyView;
 
-	public BallModel(MyView view) {
-		mMyView = view;
-		mPrevX = mMyView.getScreenWidth() / 2;
-		mPrevY = mMyView.getScreenHeight() / 2;
+	public BallModel(int screenWidth, int screenHeight) {
+		mPrevX = screenWidth / 2;
+		mPrevY = screenHeight / 2;
 		mVY = 0;
 	}
 
@@ -49,12 +47,12 @@ public class BallModel {
 	}
 
 	/** Increase mDY */
-	public void step(int time) {
+	public void step(int time, int screenHeight) {
 		mVY += GRAVITY * (time / 1000.0f);
 		mPrevY += mVY * (time / 1000.0f);
 		
-		if (mPrevY >= mMyView.getScreenHeight() - mRadius) {
-			mPrevY = mMyView.getScreenHeight() - mRadius;
+		if (mPrevY >= screenHeight - mRadius) {
+			mPrevY = screenHeight - mRadius;
 			if (Math.abs(mVY) > 10) {
 				mVY *= -ELASTICITY;
 			} else {

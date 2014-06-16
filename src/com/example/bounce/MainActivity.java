@@ -85,7 +85,7 @@ public class MainActivity extends ActionBarActivity {
 				public void run() {
 					mMyView = (MyView) mRootView
 							.findViewById(R.id.backdrop);
-					mBall = new BallModel(mMyView); // instantiate a new ball
+					mBall = new BallModel(mMyView.getScreenWidth(), mMyView.getScreenHeight()); // instantiate a new ball
 					mCircleHandler.postDelayed(new Runnable() {
 						@Override
 						public void run() {
@@ -166,7 +166,7 @@ public class MainActivity extends ActionBarActivity {
 		}
 		
 		private void stepBall(){
-			mBall.step(FRAME_RATE);
+			mBall.step(FRAME_RATE, mMyView.getScreenHeight());
 			mMyView.setPosition(mBall.getPrevX(), mBall.getPrevY());
 		}
 	}

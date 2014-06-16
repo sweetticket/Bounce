@@ -85,7 +85,6 @@ public class MainActivity extends ActionBarActivity {
 				public void run() {
 					mMyView = (MyView) mRootView
 							.findViewById(R.id.backdrop);
-
 					mBall = new BallModel(mMyView); // instantiate a new ball
 					mCircleHandler.postDelayed(new Runnable() {
 						@Override

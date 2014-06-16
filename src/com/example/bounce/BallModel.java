@@ -17,8 +17,8 @@ public class BallModel {
 
 	public BallModel(MyView view) {
 		mMyView = view;
-		mPrevX = mMyView.getScreenWidth() / 2;
-		mPrevY = mMyView.getScreenHeight() / 2;
+		mPrevX = mMyView.getWidth() / 2;
+		mPrevY = mMyView.getHeight() / 2;
 		mVY = 0;
 	}
 
@@ -55,7 +55,6 @@ public class BallModel {
 		
 		if (mPrevY >= mMyView.getScreenHeight() - mRadius) {
 			mPrevY = mMyView.getScreenHeight() - mRadius;
-			Log.d("step sinking", "sinking: abs(mVY) = "+Math.abs(mVY));
 			if (Math.abs(mVY) > 10) {
 				mVY *= -ELASTICITY;
 			} else {

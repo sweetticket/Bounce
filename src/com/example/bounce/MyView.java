@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
@@ -13,7 +14,6 @@ import android.widget.ImageView;
 public class MyView extends ImageView {
 	
 	private Paint mPaint;
-	private Canvas mCanvas;
 	private int mScreenWidth;
 	private int mScreenHeight;
 	private float mXPos;
@@ -38,19 +38,23 @@ public class MyView extends ImageView {
 	public void init(){
 		mPaint = new Paint();
 		mPaint.setColor(Color.RED);
+		mScreenWidth = getWidth();
+		mScreenHeight = getHeight();
+		mXPos = mScreenWidth / 2;
+		mYPos = mScreenHeight / 2;
 	}
 	
 	@Override
 	public void onDraw(Canvas canvas){
 		super.onDraw(canvas);
-		mCanvas = canvas;
-		mScreenWidth = getWidth();
-		mScreenHeight = getHeight();
 		drawBall();
 	}
 	
 	/** Draws the ball */
 	public void drawBall() {
+		if (mScreenWidth == 0){
+			initScreenDims();
+		}
 		Bitmap canvasBit = Bitmap.createBitmap(mScreenWidth, mScreenHeight,
 				Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(canvasBit);
@@ -80,5 +84,12 @@ public class MyView extends ImageView {
 	
 	public void setScreenHeight(int height){
 		mScreenHeight = height;
+	}
+	
+	public void initScreenDims(){
+		mScreenHeight = getHeight();
+		mScreenWidth = getWidth();
+		mXPos = mScreenWidth / 2;
+		mYPos = mScreenHeight / 2;
 	}
 }

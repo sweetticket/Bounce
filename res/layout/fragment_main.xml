@@ -6,7 +6,7 @@
     tools:context="com.example.bounce.MainActivity$PlaceholderFragment"
     android:id="@+id/relative_layout" >
 
-    <MyView android:id="@+id/backdrop"
+    <com.example.bounce.MyView android:id="@+id/backdrop"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:contentDescription="@string/backdrop"

@@ -14,10 +14,12 @@ public class BallModel {
 	private float mPrevX;
 	private float mPrevY;
 	private float mVY; // current Y velocity
+	private MyView mMyView;
 
-	public BallModel() {
-		mPrevX = PlaceholderFragment.getScreenWidth() / 2;
-		mPrevY = PlaceholderFragment.getScreenHeight() / 2;
+	public BallModel(MyView view) {
+		mMyView = view;
+		mPrevX = mMyView.getScreenWidth() / 2;
+		mPrevY = mMyView.getScreenHeight() / 2;
 		mVY = 0;
 	}
 
@@ -52,8 +54,8 @@ public class BallModel {
 		mVY += GRAVITY * (time / 1000.0f);
 		mPrevY += mVY * (time / 1000.0f);
 		
-		if (mPrevY >= PlaceholderFragment.getScreenHeight() - mRadius) {
-			mPrevY = PlaceholderFragment.getScreenHeight() - mRadius;
+		if (mPrevY >= mMyView.getScreenHeight() - mRadius) {
+			mPrevY = mMyView.getScreenHeight() - mRadius;
 			Log.d("step sinking", "sinking: abs(mVY) = "+Math.abs(mVY));
 			if (Math.abs(mVY) > 10) {
 				mVY *= -ELASTICITY;

@@ -65,7 +65,6 @@ public class MainActivity extends ActionBarActivity {
 		private static final int FRAME_RATE = 10;
 		
 		private MyView mMyView;
-		private Paint mPaint;
 		private View mRootView;
 		private BallModel mBall;
 		private static boolean mMoveEnabled;
@@ -87,15 +86,12 @@ public class MainActivity extends ActionBarActivity {
 					mMyView = (MyView) mRootView
 							.findViewById(R.id.backdrop);
 
-					mBall = new BallModel(); // instantiate a new ball
-					mPaint = new Paint();
-					mPaint.setColor(Color.RED);
+					mBall = new BallModel(mMyView); // instantiate a new ball
 					mCircleHandler.postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							if (!mMoveEnabled) {
 								mBall.step(FRAME_RATE);
-								
 							}
 							mMyView.drawBall(mBall.getPrevX(), mBall.getPrevY(), mBall.getRadius());
 							mCircleHandler.postDelayed(this, FRAME_RATE);

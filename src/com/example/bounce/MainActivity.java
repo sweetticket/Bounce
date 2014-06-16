@@ -93,7 +93,6 @@ public class MainActivity extends ActionBarActivity {
 							if (!mMoveEnabled) {
 								stepBall();
 							}
-							//mMyView.drawBall(mBall.getPrevX(), mBall.getPrevY(), mBall.getRadius());
 							mCircleHandler.postDelayed(this, FRAME_RATE);
 						}
 
@@ -153,12 +152,14 @@ public class MainActivity extends ActionBarActivity {
 			float offSetY = y - mBall.getPrevY();
 			mBall.setPrevX(mBall.getPrevX() + offSetX);
 			mBall.setPrevY(mBall.getPrevY() + offSetY);
+			mMyView.setPosition(mBall.getPrevX(), mBall.getPrevY());
+
 		}
 
 		private boolean inCircle(float x, float y, float centerX, float centerY) {
 			double dx = Math.pow(x - centerX, 2);
 			double dy = Math.pow(y - centerY, 2);
-			if ((dx + dy) <= Math.pow(mBall.getRadius(), 2)) {
+			if ((dx + dy) <= Math.pow(BallModel.getRadius(), 2)) {
 				return true;
 			} else {
 				return false;

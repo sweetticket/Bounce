@@ -89,11 +89,4 @@ public class MyView extends ImageView {
 	public void setScreenHeight(int height){
 		mScreenHeight = height;
 	}
-	
-	public void initScreenDims(){
-		mScreenHeight = getHeight();
-		mScreenWidth = getWidth();
-		mXPos = mScreenWidth / 2;
-		mYPos = mScreenHeight / 2;
-	}
 }

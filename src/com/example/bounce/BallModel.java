@@ -17,8 +17,8 @@ public class BallModel {
 
 	public BallModel(MyView view) {
 		mMyView = view;
-		mPrevX = mMyView.getWidth() / 2;
-		mPrevY = mMyView.getHeight() / 2;
+		mPrevX = mMyView.getScreenWidth() / 2;
+		mPrevY = mMyView.getScreenHeight() / 2;
 		mVY = 0;
 	}
 
